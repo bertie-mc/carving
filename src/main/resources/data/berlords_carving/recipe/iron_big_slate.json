@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "##",
+    "##"
+  ],
+  "key": {
+    "#": {
+      "tag": "c:storage_blocks/iron"
+    }
+  },
+  "result": {
+    "id": "berlords_carving:iron_big_slate",
+    "count": 1
+  }
+}

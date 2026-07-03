@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "berlords_carving:item/copper_big_slate"
+  }
+}
