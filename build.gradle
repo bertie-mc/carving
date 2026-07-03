@@ -9,6 +9,7 @@ group = mod_group_id
 
 repositories {
     mavenLocal()
+    maven { url = "https://api.modrinth.com/maven" }
 }
 
 base {
@@ -46,10 +47,11 @@ neoForge {
 }
 
 dependencies {
-    // Slag-n-Embers API for the optional integration (runtime-optional; guarded by ModList.isLoaded)
-    compileOnly files('libs/Slag-n-Embers-1.21.1-1.1a.jar')
-    // EMI API for our own native recipe-viewer plugin (client-side, optional; discovered via @EmiEntrypoint)
-    compileOnly files('libs/emi-1.1.24+1.21.1+neoforge.jar')
+    // Slag-n-Embers API for the optional integration (runtime-optional; guarded by ModList.isLoaded).
+    // Resolved from Modrinth's maven so cloud CI can build without the local jar.
+    compileOnly "maven.modrinth:slag-n-embers:1.1a"
+    // EMI API for our own native recipe-viewer plugin (client-side, optional; discovered via @EmiEntrypoint).
+    compileOnly "maven.modrinth:emi:1.1.24+1.21.1+neoforge"
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
