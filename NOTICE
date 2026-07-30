@@ -1,0 +1,21 @@
+SCOPE OF THE PUBLIC DOMAIN DEDICATION
+
+The dedication in UNLICENSE covers the original code and assets in this
+repository. This repository was previously released under the MIT License;
+it is now dedicated to the public domain by its author.
+
+It does not, and cannot, cover third-party material that this project merely
+depends on or interoperates with — the Minecraft client, NeoForge, and any mod
+whose blocks, items or APIs are referenced here. Those remain under their own
+licences.
+
+THIRD-PARTY ASSETS
+
+Slag 'n' Embers (by LopyLuna) is All Rights Reserved. When it is installed,
+Carving loads Slag's parts and art **at runtime from the user's own installed
+copy**. No Slag asset is contained in or redistributed by this repository or
+its release jars. Carving's own textures are original and are covered by the
+dedication above.
+
+Compile-time dependencies are resolved from public mavens (Modrinth, NeoForged)
+at build time. No third-party jar is committed.
