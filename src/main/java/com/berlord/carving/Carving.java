@@ -189,6 +189,24 @@ public class Carving {
      * Returns EMPTY if there is no valid result (e.g. a Slag-only material with Slag absent).
      */
     public static ItemStack resultStack(CarvingMaterial m, boolean armor, int kindIndex, int flaws, int penalty) {
+        // Pack-supplied armor overrides (config/berlords_carving-armor-overrides.json) beat both the
+        // Slag and vanilla paths — e.g. the bertie pack maps wood/bone armor carving to Immersive
+        // Armors' sets. Unregistered/absent override target -> fall through to normal behavior.
+        if (armor) {
+            String overrideId = ArmorOverrides.get(m, ArmorKind.byIndex(kindIndex));
+            if (overrideId != null) {
+                Item overrideItem = BuiltInRegistries.ITEM.get(ResourceLocation.parse(overrideId));
+                if (overrideItem != Items.AIR) {
+                    ItemStack s = new ItemStack(overrideItem);
+                    float frac = penalty > 0 ? penalty * 0.30F : flaws * 0.25F;
+                    if (frac > 0 && s.isDamageableItem()) {
+                        int max = s.getMaxDamage();
+                        s.setDamageValue(Math.max(0, Math.min(max - 1, Math.round(max * frac))));
+                    }
+                    return s;
+                }
+            }
+        }
         if (usesSlag(m)) {
             String part = armor ? ArmorKind.byIndex(kindIndex).id : ToolKind.byIndex(kindIndex).slagPart;
             ItemStack s;
