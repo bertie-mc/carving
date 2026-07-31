@@ -11,6 +11,6 @@ permissions:
 
 jobs:
   runtime:
-    uses: bertie-mc/bertie-ci/.github/workflows/neoforge-mod.yml@v1
+    uses: bertie-mc/bertie-ci/.github/workflows/neoforge-mod.yml@v2
     with:
       sides: both
