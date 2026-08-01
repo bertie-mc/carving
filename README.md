@@ -1,3 +1,5 @@
+> **Development has moved:** See [the `carving` module in the Bertie monorepo](https://github.com/bertie-mc/bertie/tree/main/mods/carving). This repository is retained read-only for historical tags, releases, and issues.
+
 # Berlord's Carving
 
 Carve early-game tool heads and armor from material slates: place the head inside a block of material and drag to carve it away. Includes optional Slag 'n' Embers and EMI integration.
