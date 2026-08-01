@@ -59,7 +59,6 @@ import java.util.function.Supplier;
 public class Carving {
     public static final String MODID = "berlords_carving";
 
-    /** Temporary diagnostic logger (durability-penalty investigation). */
     public static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger("berlords_carving");
 
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
@@ -71,11 +70,11 @@ public class Carving {
     public static final DeferredRegister<DataComponentType<?>> COMPONENTS =
             DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, MODID);
 
-    /** Tier-1 carving error count, ridden onto the result: -25% current durability per flaw. */
+    /** Tier-1 carving error count carried by the result: -25% current durability per flaw. */
     public static final Supplier<DataComponentType<Integer>> FLAWS = COMPONENTS.register("flaws",
             () -> DataComponentType.<Integer>builder()
                     .persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT).build());
-    /** Tier-2 (water-jet) penalty steps, ridden onto the result: -20% current durability per step. */
+    /** Tier-2 (water-jet) penalty steps carried by the result: -30% current durability per step. */
     public static final Supplier<DataComponentType<Integer>> PENALTY = COMPONENTS.register("penalty",
             () -> DataComponentType.<Integer>builder()
                     .persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT).build());
@@ -248,8 +247,8 @@ public class Carving {
         return resultStack(m, armor, kindIndex, 0, 0);
     }
 
-    /** The carving-shape file key. Always the slag-part (tool-HEAD / armor-part) silhouette — berlord
-     *  wants tool heads, not full tools; the OUTPUT still differs (slag part with Slag, else vanilla item). */
+    /** The carving-shape file key. Shapes depict tool heads or armor parts even when the output is a
+     * complete vanilla item. */
     public static String shapeKey(CarvingMaterial m, boolean armor, int kindIndex) {
         return "slag/" + (armor ? ArmorKind.byIndex(kindIndex).id : ToolKind.byIndex(kindIndex).slagPart);
     }

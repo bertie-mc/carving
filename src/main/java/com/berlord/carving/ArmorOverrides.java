@@ -58,28 +58,33 @@ public final class ArmorOverrides {
             if (root == null) {
                 return out;
             }
-            for (CarvingMaterial m : CarvingMaterial.values()) {
-                JsonElement el = root.get(m.id);
-                if (el == null || !el.isJsonObject()) {
-                    continue;
-                }
-                JsonObject kinds = el.getAsJsonObject();
-                Map<ArmorKind, String> kindMap = new EnumMap<>(ArmorKind.class);
-                for (ArmorKind k : ArmorKind.values()) {
-                    JsonElement id = kinds.get(k.id);
-                    if (id != null && id.isJsonPrimitive()) {
-                        kindMap.put(k, id.getAsString().toLowerCase(Locale.ROOT));
-                    }
-                }
-                if (!kindMap.isEmpty()) {
-                    out.put(m, kindMap);
-                }
-            }
+            out.putAll(parse(root));
             if (!out.isEmpty()) {
                 Carving.LOGGER.info("berlords_carving: loaded armor output overrides for {}", out.keySet());
             }
         } catch (Exception e) {
             Carving.LOGGER.error("berlords_carving: failed to read {} - ignoring overrides", file, e);
+        }
+        return out;
+    }
+
+    static Map<CarvingMaterial, Map<ArmorKind, String>> parse(JsonObject root) {
+        Map<CarvingMaterial, Map<ArmorKind, String>> out = new EnumMap<>(CarvingMaterial.class);
+        for (CarvingMaterial material : CarvingMaterial.values()) {
+            JsonElement entry = root.get(material.id);
+            if (entry == null || !entry.isJsonObject()) {
+                continue;
+            }
+            Map<ArmorKind, String> kinds = new EnumMap<>(ArmorKind.class);
+            for (ArmorKind kind : ArmorKind.values()) {
+                JsonElement id = entry.getAsJsonObject().get(kind.id);
+                if (id != null && id.isJsonPrimitive() && id.getAsJsonPrimitive().isString()) {
+                    kinds.put(kind, id.getAsString().toLowerCase(Locale.ROOT));
+                }
+            }
+            if (!kinds.isEmpty()) {
+                out.put(material, kinds);
+            }
         }
         return out;
     }

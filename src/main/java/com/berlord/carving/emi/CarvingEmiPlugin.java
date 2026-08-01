@@ -4,6 +4,7 @@ import com.berlord.carving.ArmorKind;
 import com.berlord.carving.Carving;
 import com.berlord.carving.CarvingMaterial;
 import com.berlord.carving.ToolKind;
+import com.mojang.logging.LogUtils;
 import dev.emi.emi.api.EmiEntrypoint;
 import dev.emi.emi.api.EmiPlugin;
 import dev.emi.emi.api.EmiRegistry;
@@ -11,6 +12,7 @@ import dev.emi.emi.api.stack.EmiStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import org.slf4j.Logger;
 
 /**
  * Built-in EMI plugin for Berlord's Carving. EMI ASM-discovers this via {@link EmiEntrypoint}
@@ -21,11 +23,13 @@ import net.minecraft.world.item.ItemStack;
  */
 @EmiEntrypoint
 public class CarvingEmiPlugin implements EmiPlugin {
+    private static final Logger LOGGER = LogUtils.getLogger();
     private static final ResourceLocation CATEGORY_ID =
             ResourceLocation.fromNamespaceAndPath(Carving.MODID, "carving");
 
     @Override
     public void register(EmiRegistry registry) {
+        int recipeCount = 0;
         EmiStack station = EmiStack.of(Carving.CARVING_STATION_ITEM.get());
         CarvingEmiCategory category = new CarvingEmiCategory(CATEGORY_ID, station,
                 Component.translatable("emi.category.berlords_carving.carving"));
@@ -37,26 +41,28 @@ public class CarvingEmiPlugin implements EmiPlugin {
             if (Carving.SMALL_SLATES.containsKey(m)) {
                 EmiStack slate = EmiStack.of(Carving.SMALL_SLATES.get(m).get());
                 for (ToolKind k : ToolKind.values()) {
-                    addRecipe(registry, category, m, slate, false, k.ordinal(), k.id, tier);
+                    recipeCount += addRecipe(registry, category, m, slate, false, k.ordinal(), k.id, tier);
                 }
             }
             if (Carving.BIG_SLATES.containsKey(m)) {
                 EmiStack slate = EmiStack.of(Carving.BIG_SLATES.get(m).get());
                 for (ArmorKind k : ArmorKind.values()) {
-                    addRecipe(registry, category, m, slate, true, k.ordinal(), k.id, tier);
+                    recipeCount += addRecipe(registry, category, m, slate, true, k.ordinal(), k.id, tier);
                 }
             }
         }
+        LOGGER.info("Registered {} carving recipes with EMI", recipeCount);
     }
 
-    private static void addRecipe(EmiRegistry registry, CarvingEmiCategory category, CarvingMaterial m,
-                                  EmiStack slate, boolean armor, int kindIndex, String kindId, Component tier) {
+    private static int addRecipe(EmiRegistry registry, CarvingEmiCategory category, CarvingMaterial m,
+                                 EmiStack slate, boolean armor, int kindIndex, String kindId, Component tier) {
         ItemStack result = Carving.resultStack(m, armor, kindIndex, 0, 0);
         if (result.isEmpty()) {
-            return; // e.g. a Slag-only material with Slag absent
+            return 0; // e.g. a Slag-only material with Slag absent
         }
         ResourceLocation id = ResourceLocation.fromNamespaceAndPath(Carving.MODID,
                 "carving/" + (armor ? "armor/" : "tool/") + m.id + "_" + kindId);
         registry.addRecipe(new CarvingEmiRecipe(category, id, slate, EmiStack.of(result), tier));
+        return 1;
     }
 }

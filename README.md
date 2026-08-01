@@ -14,7 +14,15 @@ Download the latest JAR from the [Releases page](../../releases) and put it in y
 Works standalone with its own textures. When **Slag 'n' Embers** (by LopyLuna) is installed, Carving integrates with it and uses Slag's parts and art **at runtime**, loaded from your installed copy of Slag — this repository does not contain or redistribute any Slag assets. Slag 'n' Embers is All Rights Reserved.
 
 ## Building
-`gradle build` — the built JAR is written to `build/libs/`. Optional dependencies (Slag 'n' Embers, EMI) are resolved from Modrinth, so the build works without any local jars.
+Enter the shared environment with `nix develop ../bertie-ci` from the standard workspace (or
+`nix develop github:bertie-mc/bertie-ci` from a standalone clone), then run `gradle build`; the JAR
+is written to `build/libs/`. Optional dependencies are resolved from Modrinth, so no local jars are
+required.
+
+`gradle test` checks the material and network-index contracts, armor overrides, packaged JSON,
+models, textures, shapes, and Slag recipe replacements. `gradle runGameTestServer` exercises the
+waterlogged carving station and its inventory. CI additionally launches a client with EMI and Slag,
+verifies all 148 integration recipes register, and joins a world.
 
 ## License
 

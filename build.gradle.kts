@@ -1,4 +1,5 @@
 import org.gradle.language.jvm.tasks.ProcessResources
+import org.gradle.api.tasks.testing.Test
 
 plugins {
     `java-library`
@@ -35,6 +36,8 @@ base {
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
+val gameTest = sourceSets.create("gameTest")
+
 neoForge {
     version = neo_version
 
@@ -50,6 +53,10 @@ neoForge {
         register("server") {
             server()
         }
+        register("gameTestServer") {
+            type = "gameTestServer"
+            systemProperty("neoforge.enabledGameTestNamespaces", "minecraft")
+        }
         configureEach {
             systemProperty("forge.logging.markers", "REGISTRIES")
             logLevel = org.slf4j.event.Level.DEBUG
@@ -59,16 +66,34 @@ neoForge {
     mods {
         register(mod_id) {
             sourceSet(sourceSets.main.get())
+            sourceSet(gameTest)
         }
+    }
+
+    addModdingDependenciesTo(gameTest)
+
+    unitTest {
+        enable()
+        testedMod = mods.getByName(mod_id)
     }
 }
 
+gameTest.compileClasspath += sourceSets.main.get().output
+gameTest.runtimeClasspath += sourceSets.main.get().output
+
 dependencies {
-    // Slag-n-Embers API for the optional integration (runtime-optional; guarded by ModList.isLoaded).
-    // Resolved from Modrinth's maven so cloud CI can build without the local jar.
+    // Optional integrations are guarded at runtime.
     compileOnly("maven.modrinth:slag-n-embers:1.1a")
-    // EMI API for our own native recipe-viewer plugin (client-side, optional; discovered via @EmiEntrypoint).
     compileOnly("maven.modrinth:emi:1.1.24+1.21.1+neoforge")
+
+    testImplementation(platform("org.junit:junit-bom:6.1.2"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+tasks.named<Test>("test") {
+    useJUnitPlatform()
+    systemProperty("bertie.projectDir", layout.projectDirectory.asFile.absolutePath)
 }
 
 val generateModMetadata = tasks.register<ProcessResources>("generateModMetadata") {

@@ -54,10 +54,8 @@ public final class SlagCompat {
             }
             int maxFlaws = 0;
             int maxPenalty = 0;
-            int partCount = 0;
             try {
                 for (Pair<ItemStack, ?> part : modular.getDynamicParts(stack)) {
-                    partCount++;
                     maxFlaws = Math.max(maxFlaws, part.getFirst().getOrDefault(Carving.FLAWS.get(), 0));
                     maxPenalty = Math.max(maxPenalty, part.getFirst().getOrDefault(Carving.PENALTY.get(), 0));
                 }
@@ -76,13 +74,6 @@ public final class SlagCompat {
             // do NOT mark it penalized so we retry.
             boolean hasModType = stack.has(AllDataComponents.MODULAR_TYPE.get());
             int max = stack.getMaxDamage();
-            // === TEMP DIAGNOSTIC (durability bug) ===
-            Carving.LOGGER.info(
-                    "[carve-dbg] item={} hasModularType={} hasDynParts={} parts={} maxPenalty={} maxFlaws={} frac={} getMaxDamage={} curDamage={} computedDmg={}",
-                    stack.getHoverName().getString(), hasModType,
-                    stack.has(AllDataComponents.DYNAMIC_PARTS.get()), partCount, maxPenalty,
-                    maxFlaws, frac, max, stack.getDamageValue(), Math.round(max * frac));
-            // === END TEMP DIAGNOSTIC ===
             if (!hasModType || max <= 1) {
                 continue; // not fully assembled yet (or unbreakable) - retry on a later tick
             }

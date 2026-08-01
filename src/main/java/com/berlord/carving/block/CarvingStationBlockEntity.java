@@ -20,7 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
 
-/** Holds the station's input (diamond slate) and output (carved head) stacks. */
+/** Holds the station's tier-2 slate input and carved output stacks. */
 public class CarvingStationBlockEntity extends BlockEntity implements MenuProvider {
     public static final int SLOT_INPUT = 0;
     public static final int SLOT_OUTPUT = 1;

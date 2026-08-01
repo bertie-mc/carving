@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Loads the carving form maps from assets/berlords_carving/shapes/&lt;id&gt;.json (tool id or armor id).
+ * Loads carving form maps from {@code assets/berlords_carving/shapes/slag/<part>.json}.
  * Format: {@code {"pattern": [16 rows of 16 chars]}} where '.' = empty (carve away) and '0'-'7' = the
  * part's palette level at that cell. Edges between cells of differing level become the carving form-lines;
  * any non-'.' cell is part of the silhouette (keep).

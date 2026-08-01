@@ -1,18 +1,8 @@
 #!/usr/bin/env python3
-"""Single source of truth for Berlord's Carving assets.
+"""Regenerate the committed slate, shape, model, language, and recipe assets.
 
-Carving now produces the FINAL item directly (no Berlord's intermediate item):
-  - Slag present (+ material has a Slag id) -> a slag:dynamic_part (built in Java, SlagCompat).
-  - Slag absent OR leather               -> the full vanilla tool/armor (built in Java).
-So this pipeline only emits: slate textures/models, the two carving-shape sets, the flint block,
-the carving-station item model, lang, and recipes (slates + flint + station + Slag part-recipe
-removals). NO head/armor item textures, NO to_part/assemble recipes.
-
-Shapes (silhouettes) come in two sets and the screen picks by Slag presence:
-  shapes/slag/<part>.json    from Slag's greyscale part templates (pickaxe_head..sword_blade, helmet..boots)
-  shapes/vanilla/<kind>.json from the vanilla item icons          (pickaxe..sword,       helmet..boots)
-
-Run:  python make_assets.py
+Requires Pillow and the untracked reference inputs under ``texture-work/slag-ref``. Run from this
+directory with ``python3 make_assets.py``.
 """
 import json
 import os
@@ -28,7 +18,6 @@ DATA = os.path.join(BASE, "src", "main", "resources", "data", MODID)
 SLAG = os.path.join(os.path.dirname(__file__), "slag-ref")
 PAL = os.path.join(SLAG, "palettes")
 PAL_ARMOR = os.path.join(SLAG, "palettes_armor")
-VANILLA = os.path.join(os.path.dirname(__file__), "vanilla-icons")
 SLAG_DATA = os.path.join(BASE, "src", "main", "resources", "data", "slag")
 
 # id -> (slag_id|None, tier, vanilla_tool|None, vanilla_armor|None, has_tools, display)
@@ -190,18 +179,14 @@ def main():
     os.makedirs(tex, exist_ok=True)
     lang = {}
 
-    # ---- shapes: slag part set + vanilla item set --------------------------
+    # ---- tool-head and armor-part carving silhouettes ----------------------
     for tool in TOOLS:
         part = TOOL_PART[tool]
         write_json(os.path.join(ASSETS, "shapes", "slag", f"{part}.json"),
                    {"pattern": shape_rows(Image.open(os.path.join(SLAG, f"dyn_base_{part}.png")))})
-        write_json(os.path.join(ASSETS, "shapes", "vanilla", f"{tool}.json"),
-                   {"pattern": shape_rows(Image.open(os.path.join(VANILLA, f"iron_{tool}.png")))})
     for piece in ARMORS:
         write_json(os.path.join(ASSETS, "shapes", "slag", f"{piece}.json"),
                    {"pattern": shape_rows(Image.open(os.path.join(SLAG, f"armor_base_{piece}.png")))})
-        write_json(os.path.join(ASSETS, "shapes", "vanilla", f"{piece}.json"),
-                   {"pattern": shape_rows(Image.open(os.path.join(VANILLA, f"iron_{piece}.png")))})
 
     # ---- slate textures/models/lang ---------------------------------------
     armor_base = load_strip(os.path.join(PAL_ARMOR, "base_palette.png"))

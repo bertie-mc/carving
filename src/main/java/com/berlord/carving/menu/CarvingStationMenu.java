@@ -14,7 +14,7 @@ import net.neoforged.neoforge.items.SlotItemHandler;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Slotted workstation: input (diamond slate) + output (carved head), plus the player inventory.
+ * Slotted workstation: tier-2 slate input and carved output, plus the player inventory.
  * The carving canvas itself is drawn/handled client-side in CarvingStationScreen; this menu only
  * owns the item slots and their server-authoritative state.
  */
@@ -86,7 +86,7 @@ public class CarvingStationMenu extends AbstractContainerMenu {
             }
             slot.onQuickCraft(stack, copy);
         } else {
-            // player inventory -> input slot (only diamond slates will be accepted by the slot)
+            // player inventory -> input slot (only tier-2 slates are accepted)
             if (!this.moveItemStackTo(stack, CarvingStationBlockEntity.SLOT_INPUT,
                     CarvingStationBlockEntity.SLOT_INPUT + 1, false)) {
                 return ItemStack.EMPTY;
